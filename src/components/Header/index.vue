@@ -71,11 +71,11 @@ export default {
             // 模板字符串传参
             // this.$router.push(`/search/${this.keyword}?key=1111`)
             // 对象传参
-            this.$router.push({
-                name: 'Search',
-                params: { keyword: this.keyword },
-                query: { key: this.keyword.toUpperCase() }
-            })
+            if (this.$route.query) {
+                let location = { name: 'Search', params: { keyword: this.keyword || undefined } }
+                location.query = this.$route.query
+                this.$router.push(location)
+            }
 
         }
     },

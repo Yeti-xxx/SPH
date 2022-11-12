@@ -5,8 +5,8 @@
                 <!--banner轮播-->
                 <div class="swiper-container" id="mySwiper">
                     <div class="swiper-wrapper">
-                        <div class="swiper-slide">
-                            <img src="./images/banner1.jpg" />
+                        <div class="swiper-slide" v-for="(carousel, i) in bannerList" :key="i">
+                            <img :src="carousel.imgUrl" />
                         </div>
                         <!-- <div class="swiper-slide">
                             <img src="./images/banner2.jpg" />
@@ -110,8 +110,93 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+import Swiper from 'swiper'
 export default {
-    name: 'ListContainer'
+    name: 'ListContainer',
+    computed: {
+        ...mapState({
+            bannerList: state => state.home.bannerList,
+        })
+    },
+    watch: {
+        bannerList(newV, oldV) {
+            this.$nextTick(() => {
+                var mySwiper = new Swiper(document.querySelector(".swiper-container"), {
+                    //设置轮播图防线
+                    direction: "horizontal",
+                    //开启循环模式
+                    loop: true,
+                    // 如果需要分页器
+                    pagination: {
+                        el: ".swiper-pagination",
+                        //分页器类型
+                        type: "bullets",
+                        //点击分页器，切换轮播
+                        clickable: true,
+                    },
+                    //自动轮播
+                    autoplay: {
+                        delay: 1000,
+                        //新版本的写法：目前是5版本
+                        // pauseOnMouseEnter: true,
+                        //如果设置为true，当切换到最后一个slide时停止自动切换
+                        stopOnLastSlide: true,
+                        //用户操作swiper之后，是否禁止autoplay
+                        disableOnInteraction: false,
+                    },
+                    // 如果需要前进后退按钮
+                    navigation: {
+                        nextEl: ".swiper-button-next",
+                        prevEl: ".swiper-button-prev",
+                    },
+                    //切换效果
+                    // effect: "cube",
+                });
+            })
+        },
+        floorList(newV, oldV) {
+            this.$nextTick(() => {
+                var mySwiper = new Swiper(document.querySelector(".swiper-container"), {
+                    //设置轮播图防线
+                    direction: "horizontal",
+                    //开启循环模式
+                    loop: true,
+                    // 如果需要分页器
+                    pagination: {
+                        el: ".swiper-pagination",
+                        //分页器类型
+                        type: "bullets",
+                        //点击分页器，切换轮播
+                        clickable: true,
+                    },
+                    //自动轮播
+                    autoplay: {
+                        delay: 1000,
+                        //新版本的写法：目前是5版本
+                        // pauseOnMouseEnter: true,
+                        //如果设置为true，当切换到最后一个slide时停止自动切换
+                        stopOnLastSlide: true,
+                        //用户操作swiper之后，是否禁止autoplay
+                        disableOnInteraction: false,
+                    },
+                    // 如果需要前进后退按钮
+                    navigation: {
+                        nextEl: ".swiper-button-next",
+                        prevEl: ".swiper-button-prev",
+                    },
+                    //切换效果
+                    // effect: "cube",
+                });
+            })
+        }
+    },
+    mounted() {
+        // 派发action 将数据存储到仓库中
+        this.$store.dispatch('getBannerList')
+        
+
+    },
 }
 
 </script>

@@ -5,6 +5,10 @@ export default {
   components: {
     Header,
     Footer
+  },
+  mounted(){
+    // 在根组件中获取三级分类列表数据，避免多次发起该请求
+    this.$store.dispatch('categoryList')
   }
 }
 </script>

@@ -1,6 +1,10 @@
+import { reqGetBannerList } from "../../api/index"
 const state = {}
 const mutations = {}
-const actions = {}
+const actions = {
+
+
+}
 const getters = {}
 
 export default {

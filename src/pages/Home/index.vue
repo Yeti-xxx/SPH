@@ -6,7 +6,7 @@
     <Recommend></Recommend>
     <Rank></Rank>
     <Like></Like>
-    <Floor></Floor>
+    <Floor v-for="(floor, i) in floorList" :key="i" :list="floor"></Floor>
     <Brand></Brand>
   </div>
 </template>
@@ -30,7 +30,12 @@ export default {
     Brand
   },
   computed: {
-
+    ...mapState({
+      floorList: state => state.home.floorList
+    })
+  },
+  mounted() {
+    this.$store.dispatch('getFloorList')
   }
 }
 
