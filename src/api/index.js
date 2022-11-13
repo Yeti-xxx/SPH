@@ -15,6 +15,11 @@ export const reqGetBannerList = () => {
 }
 
 // 获取floor轮播图接口
-export const reqGetFloorList = () =>{
-    return mockRequest({url:'/floor',method:'GET'})
+export const reqGetFloorList = () => {
+    return mockRequest({ url: '/floor', method: 'GET' })
+}
+
+// 获取搜索详情
+export const reqGetSearchInfo = (params) => {
+    return request({ url: '/api/list', method: 'POST', data: params})
 }
