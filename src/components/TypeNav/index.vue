@@ -104,7 +104,6 @@ export default {
                 if (this.$route.params) {
                     location.query = query
                     location.params = this.$route.params
-                    console.log(location);
                 }
                 // 整理参数
                 this.$router.push(location)

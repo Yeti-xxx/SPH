@@ -11,16 +11,26 @@
             </li>
           </ul>
           <ul class="fl sui-tag">
-            <li class="with-x">手机</li>
-            <li class="with-x">iphone<i>×</i></li>
-            <li class="with-x">华为<i>×</i></li>
-            <li class="with-x">OPPO<i>×</i></li>
+            <!-- 分类标签的面包屑 -->
+            <li class="with-x" v-if="searchParams.categoryName">{{ searchParams.categoryName }}<i
+                @click="removeCatgoryName">×</i>
+            </li>
+            <!-- 关键字的面包屑 -->
+            <li class="with-x" v-if="searchParams.keyword">{{ searchParams.keyword }}<i @click="removeKeyword">×</i>
+            </li>
+            <!-- 品牌的面包屑 -->
+            <li class="with-x" v-if="searchParams.trademark">{{ searchParams.trademark.split(':')[1] }}<i
+                @click="removeTrademark">×</i>
+            </li>
+            <!-- 售卖属性的面包屑 -->
+            <li class="with-x" v-for="(param, i) in searchParams.props" :key="i">{{ param.split(":")[1] }}<i
+                @click="removeProp(i)">×</i>
+            </li>
           </ul>
         </div>
 
         <!--selector-->
-        <SearchSelector />
-
+        <SearchSelector @tradeMarkInfo="trademarkInfo" @attrInfo="attrInfo" />
         <!--details-->
         <div class="details clearfix">
           <div class="sui-navbar">
@@ -61,7 +71,8 @@
                     </strong>
                   </div>
                   <div class="attr">
-                    <a target="_blank" href="item.html" title="促销信息，下单即赠送三个月CIBN视频会员卡！【小米电视新品4A 58 火爆预约中】">{{ good.title
+                    <a target="_blank" href="item.html" title="促销信息，下单即赠送三个月CIBN视频会员卡！【小米电视新品4A 58 火爆预约中】">{{
+                        good.title
                     }}</a>
                   </div>
                   <div class="commit">
@@ -116,7 +127,7 @@ import { mapState, mapGetters } from 'vuex';
 export default {
   name: 'Search',
   computed: {
-    ...mapGetters(['goodsList'])
+    ...mapGetters(['goodsList', 'trademarkList', 'attrList'])
   },
   data() {
     return {
@@ -140,10 +151,20 @@ export default {
   components: {
     SearchSelector
   },
-  beforeMount(){
-    console.log(this.$route.query);
+  watch: {
+    // 监听路由地址的变化，改变就发送新的搜索请求
+    $route(newV, oldV) {
+      // 先整理参数
+      Object.assign(this.searchParams, this.$route.query, this.$route.params)
+      // 整理后再发送请求
+      this.getSearchList()
+      // 请求完成后需要将上一次的1,2,3级分类id清除
+      this.clearCategoryId()
+    }
+  },
+  beforeMount() {
     // 整理参数,相同的属性会合并
-    Object.assign(this.searchParams,this.$route.query,this.$route.params)
+    Object.assign(this.searchParams, this.$route.query, this.$route.params)
   },
   mounted() {
     this.getSearchList()
@@ -151,8 +172,54 @@ export default {
   methods: {
     // 获取search数据
     getSearchList() {
-      this.$store.dispatch('getSearchList',this.searchParams)
-    }
+      this.$store.dispatch('getSearchList', this.searchParams)
+    },
+    // 删除面包屑中的分类标签
+    removeCatgoryName() {
+      this.searchParams.categoryName = ''
+      // this.getSearchList()
+      this.clearCategoryId()
+      // 地址栏需要修改，并进行跳转
+      this.$router.push({ name: 'Search', params: this.$route.params })  //保留params中的keyword
+    },
+    // 删除面包屑中的关键词标签
+    removeKeyword() {
+      this.searchParams.keyword = ''
+      this.$router.push({ name: 'Search', query: this.$route.query })
+    },
+    // 删除品牌面包屑
+    removeTrademark() {
+      this.searchParams.trademark = ''
+      this.getSearchList()
+    },
+    // 删除售卖属性的面包屑
+    removeProp(i) {
+      this.searchParams.props.splice(i,1) //从数组剔除该项
+      // 再次发起请求
+      this.getSearchList()
+    },
+    clearCategoryId() {
+      // 请求完成后需要将上一次的1,2,3级分类id清除
+      this.searchParams.category1Id = ''
+      this.searchParams.category2Id = ''
+      this.searchParams.category3Id = ''
+    },
+    // 子组件中点击品牌的自定义回调
+    trademarkInfo(trademark) {
+      // 拿到子组件传来的品牌信息后加入searchParams
+      this.searchParams.trademark = `${trademark.tmId}:${trademark.tmName}`
+      this.getSearchList()
+    },
+    // 子组件中点击售卖属性的回调
+    attrInfo(attr, attrValue) {
+      let prop = `${attr.attrId}:${attrValue}:${attr.attrName}`
+      if (this.searchParams.props.indexOf(prop) === -1) {
+        this.searchParams.props.push(prop)
+      }
+      this.getSearchList()
+
+    },
+
   }
 }
 </script>
@@ -316,7 +383,7 @@ export default {
                   font-weight: 700;
 
                   i {
-                    margin-left: -5px;
+                    margin-left: 3px;
                   }
                 }
               }
