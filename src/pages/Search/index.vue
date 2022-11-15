@@ -36,23 +36,17 @@
           <div class="sui-navbar">
             <div class="navbar-inner filter">
               <ul class="sui-nav">
-                <li class="active">
-                  <a href="#">综合</a>
+                <li :class="{ active: isOne }" @click="changeOrder('1')">
+                  <a>综合
+                    <span v-show="isOne && searchParams.order.indexOf('asc') !== -1">↑</span>
+                    <span v-show="isOne && searchParams.order.indexOf('desc') !== -1">↓</span>
+                  </a>
                 </li>
-                <li>
-                  <a href="#">销量</a>
-                </li>
-                <li>
-                  <a href="#">新品</a>
-                </li>
-                <li>
-                  <a href="#">评价</a>
-                </li>
-                <li>
-                  <a href="#">价格⬆</a>
-                </li>
-                <li>
-                  <a href="#">价格⬇</a>
+                <li :class="{ active: isTwo }" @click="changeOrder('2')">
+                  <a>价格
+                    <span v-show="isTwo && searchParams.order.indexOf('asc') !== -1">↑</span>
+                    <span v-show="isTwo && searchParams.order.indexOf('desc') !== -1">↓</span>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -86,38 +80,13 @@
               </li>
             </ul>
           </div>
-          <div class="fr page">
-            <div class="sui-pagination clearfix">
-              <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
-                </li>
-                <li class="active">
-                  <a href="#">1</a>
-                </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted"><span>...</span></li>
-                <li class="next">
-                  <a href="#">下一页»</a>
-                </li>
-              </ul>
-              <div><span>共10页&nbsp;</span></div>
-            </div>
-          </div>
+          <!-- 分页器 -->
+          <Pagination :pageNo="searchParams.pageNo" :pageSize="searchParams.pageSize" :total="total" :continues="5"
+            @getPageNo="getPageNo" />
         </div>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -127,7 +96,16 @@ import { mapState, mapGetters } from 'vuex';
 export default {
   name: 'Search',
   computed: {
-    ...mapGetters(['goodsList', 'trademarkList', 'attrList'])
+    ...mapGetters(['goodsList', 'trademarkList', 'attrList']),
+    isOne() {
+      return this.searchParams.order.indexOf('1') !== -1
+    },
+    isTwo() {
+      return this.searchParams.order.indexOf('2') !== -1
+    },
+    ...mapState({
+      total: state => state.search.searchList.total
+    })
   },
   data() {
     return {
@@ -138,7 +116,8 @@ export default {
         category3Id: "",
         categoryName: "",
         keyword: "",
-        order: "",
+        // 排序默认 综合降序  1:综合 2:价格
+        order: "1:desc",
         pageNo: 1,
         pageSize: 10,
         // 售卖的属性
@@ -153,13 +132,16 @@ export default {
   },
   watch: {
     // 监听路由地址的变化，改变就发送新的搜索请求
-    $route(newV, oldV) {
-      // 先整理参数
-      Object.assign(this.searchParams, this.$route.query, this.$route.params)
-      // 整理后再发送请求
-      this.getSearchList()
-      // 请求完成后需要将上一次的1,2,3级分类id清除
-      this.clearCategoryId()
+    $route: {
+      handler(newV, oldV) {
+        console.log(111);
+        // 先整理参数
+        Object.assign(this.searchParams, this.$route.query, this.$route.params)
+        // 整理后再发送请求
+        this.getSearchList()
+        // 请求完成后需要将上一次的1,2,3级分类id清除
+        this.clearCategoryId()
+      },
     }
   },
   beforeMount() {
@@ -194,7 +176,7 @@ export default {
     },
     // 删除售卖属性的面包屑
     removeProp(i) {
-      this.searchParams.props.splice(i,1) //从数组剔除该项
+      this.searchParams.props.splice(i, 1) //从数组剔除该项
       // 再次发起请求
       this.getSearchList()
     },
@@ -219,6 +201,26 @@ export default {
       this.getSearchList()
 
     },
+    // 排序操作
+    changeOrder(flag) {
+      // flag:1 or 2 1表综合 2表价格
+      // 获取当前升降序状态
+      const originOrder = this.searchParams.order.split(':')[1]
+      let resOrder = null //结果状态
+      if (originOrder === 'asc') {
+        resOrder = 'desc'
+      } else {
+        resOrder = 'asc'
+      }
+      this.searchParams.order = flag + ':' + resOrder //赋值新状态
+      this.getSearchList()
+    },
+    // 获取页数
+    getPageNo(page){
+      // 整理参数
+      this.searchParams.pageNo = page
+      this.getSearchList()
+    }
 
   }
 }
