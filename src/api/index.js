@@ -21,5 +21,10 @@ export const reqGetFloorList = () => {
 
 // 获取搜索详情
 export const reqGetSearchInfo = (params) => {
-    return request({ url: '/api/list', method: 'POST', data: params})
+    return request({ url: '/api/list', method: 'POST', data: params })
+}
+
+// 获取商品详情
+export const reqGetGoodInfo = (skuid) => {
+    return request({ url: '/api/item/' + skuid, method: 'GET' })
 }
