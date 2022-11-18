@@ -6,6 +6,7 @@ import Search from '../pages/Search/index.vue'
 import Login from '../pages/Login/index.vue'
 import Register from '../pages/Register/index.vue'
 import Detail from '../pages/Detail/index.vue'
+import Addsucc from '../pages/AddSuccess/index.vue'
 const Router = createRouter({
     history: createWebHashHistory(),
     // 添加滚动行为
@@ -21,6 +22,7 @@ const Router = createRouter({
         { path: '/login', component: Login, name: 'Login', meta: { show: false } },
         { path: '/register', component: Register, name: 'Register', meta: { show: false } },
         { path: '/detail/:skuid', component: Detail, name: 'Detail', meta: { show: true } },
+        { path: '/addsucc', component: Addsucc, name: 'Addsucc', meta: { show: true } },
     ]
 })
 export default Router;

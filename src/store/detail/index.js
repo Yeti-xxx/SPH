@@ -1,10 +1,14 @@
-import { reqGetGoodInfo } from "../../api/index"
+import { reqGetGoodInfo, reqAddOrUpdateShopCart } from "../../api/index"
 const state = {
-    goodInfo: {}
+    goodInfo: {},
+    imgIndex: 0
 }
 const mutations = {
     GETGOODINFO(state, goodInfo) {
         state.goodInfo = goodInfo
+    },
+    CHANGEIMGINDEX(state, imgIndex) {
+        state.imgIndex = imgIndex
     }
 }
 const actions = {
@@ -13,6 +17,15 @@ const actions = {
         const res = await reqGetGoodInfo(skuid)
         if (res.code === 200) {
             commit("GETGOODINFO", res.data)
+        }
+    },
+    // 添加购物车
+    async AddShopCart({ commit }, { skuId, skuNum }) {
+        const res = await reqAddOrUpdateShopCart(skuId, skuNum)
+        if (res.code === 200) {
+            return 'ok'
+        }else{
+            return Promise.reject(new Error('加入购物车失败'))
         }
     }
 }

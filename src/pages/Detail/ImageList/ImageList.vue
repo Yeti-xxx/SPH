@@ -1,10 +1,9 @@
 <template>
-  <div class="swiper-container">
+  <div class="swiper-container" ref="swiperContainer">
     <div class="swiper-wrapper">
       <div class="swiper-slide" v-for="(img, i) in skuImageList" :key="i">
-        <img :src="img.imgUrl">
+        <img :src="img.imgUrl" :class="{ active: currentIndex == i }" @click="changeCurrentIndex(i)">
       </div>
-      
     </div>
     <div class="swiper-button-next"></div>
     <div class="swiper-button-prev"></div>
@@ -14,9 +13,39 @@
 <script>
 
 import Swiper from 'swiper'
+import { mapMutations } from 'vuex'
 export default {
   name: "ImageList",
   props: ['skuImageList'],
+  data() {
+    return {
+      currentIndex: 0 //默认第一张图片被选中
+    }
+  },
+  watch: {
+    skuImageList: {
+      handler(newV, oldV) {
+        this.$nextTick(() => {
+          var mySwiper = new Swiper(this.$refs.swiperContainer, {
+            // 如果需要前进后退按钮
+            navigation: {
+              nextEl: '.swiper-button-next',
+              prevEl: '.swiper-button-prev',
+            },
+            slidesPerView: 3, //定义容器显示多少元素
+            slidesPerGroup: 3 //定义多少数量为一组
+          })
+        })
+      }
+    }
+  },
+  methods: {
+    ...mapMutations(['CHANGEIMGINDEX']),
+    changeCurrentIndex(i) {
+      this.currentIndex = i
+      this.CHANGEIMGINDEX(this.currentIndex)
+    }
+  }
 }
 </script>
 

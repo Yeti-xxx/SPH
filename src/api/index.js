@@ -28,3 +28,8 @@ export const reqGetSearchInfo = (params) => {
 export const reqGetGoodInfo = (skuid) => {
     return request({ url: '/api/item/' + skuid, method: 'GET' })
 }
+
+// 商品添加到购物车中
+export const reqAddOrUpdateShopCart = (skuId, skuNum) => {
+    return request({ url: `/api/cart/addToCart/${skuId}/${skuNum}`, method: 'POST' })
+}

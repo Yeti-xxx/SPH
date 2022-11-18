@@ -1,21 +1,61 @@
 <template>
   <div class="spec-preview">
     <img :src="imgObj.imgUrl" />
-    <div class="event"></div>
+    <div class="event" @mousemove="handler"></div>
     <div class="big">
-      <img :src="imgObj.imgUrl" />
+      <img :src="imgObj.imgUrl" ref="big" />
     </div>
-    <div class="mask"></div>
+    <div class="mask" ref="mask"></div>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
   name: "Zoom",
   props: ['skuImageList'],
-  computed:{
-    imgObj(){
-      return this.skuImageList[0] || {}
+  data() {
+    return {
+      currentIndex: 0
+    }
+  },
+  watch: {
+    imgIndex(newV, oldV) {
+      this.currentIndex = newV
+    }
+  },
+  computed: {
+    imgObj() {
+      return this.skuImageList[this.currentIndex] || {}
+    },
+    ...mapState({
+      imgIndex: state => state.detail.imgIndex,
+    })
+  },
+  methods: {
+    // 鼠标移动 放大镜
+    handler(e) {
+      const mask = this.$refs.mask
+      let big = this.$refs.big
+      let left = e.offsetX - mask.offsetWidth / 2 //鼠标距离容器左边距离减去二分之一遮罩层宽度，得出遮罩层远距离容器左边距
+      let top = e.offsetY - mask.offsetHeight / 2 //上边距同理
+      if (left <= 0) {
+        left = 0
+      }
+      if (left >= mask.offsetWidth) {
+        left = mask.offsetWidth
+      }
+      if (top <= 0) {
+        top = 0
+      }
+      if (top >= mask.offsetHeight) {
+        top = mask.offsetHeight
+      }
+      // 修改元素left top值
+      mask.style.left = left + 'px'
+      mask.style.top = top + 'px'
+      big.style.left = -2 * left + 'px'
+      big.style.top = -2 * top + 'px'
     }
   }
 }

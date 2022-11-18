@@ -218,7 +218,7 @@ export default {
       this.getSearchList()
     },
     // 获取页数
-    getPageNo(page){
+    getPageNo(page) {
       // 整理参数
       this.searchParams.pageNo = page
       this.getSearchList()
