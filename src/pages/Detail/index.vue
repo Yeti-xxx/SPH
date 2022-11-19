@@ -379,8 +379,10 @@ export default {
     async addShopCart() {
       try {
         const res = await this.$store.dispatch('AddShopCart', { skuId: this.$route.params.skuid, skuNum: this.skuNum })
-        // 成功进行路由跳转
-        this.$router.push({ name: 'Addsucc' })
+        // 成功进行路由跳转 只携带商品数量 商品属性通过会话存储进行传递
+        // 采用session存储（浏览器关闭会数据会丢失）
+        sessionStorage.setItem('SKUINFO',JSON.stringify(this.skuInfo))
+        this.$router.push({ name: 'Addsucc', query: { kuNum: this.skuNum } })
       } catch (error) {
         alert(error.message)
       }

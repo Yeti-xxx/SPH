@@ -1,7 +1,10 @@
 import { reqGetGoodInfo, reqAddOrUpdateShopCart } from "../../api/index"
+// 封装临时游客的uuid 生成后不能再改变
+import { getUUID } from '../utils/uuid_token'
 const state = {
     goodInfo: {},
-    imgIndex: 0
+    imgIndex: 0,
+    uuid_token: getUUID()
 }
 const mutations = {
     GETGOODINFO(state, goodInfo) {
@@ -24,7 +27,7 @@ const actions = {
         const res = await reqAddOrUpdateShopCart(skuId, skuNum)
         if (res.code === 200) {
             return 'ok'
-        }else{
+        } else {
             return Promise.reject(new Error('加入购物车失败'))
         }
     }

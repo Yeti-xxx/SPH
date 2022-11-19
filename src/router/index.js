@@ -7,6 +7,7 @@ import Login from '../pages/Login/index.vue'
 import Register from '../pages/Register/index.vue'
 import Detail from '../pages/Detail/index.vue'
 import Addsucc from '../pages/AddSuccess/index.vue'
+import ShopCart from '../pages/shopCart/index.vue'
 const Router = createRouter({
     history: createWebHashHistory(),
     // 添加滚动行为
@@ -23,6 +24,7 @@ const Router = createRouter({
         { path: '/register', component: Register, name: 'Register', meta: { show: false } },
         { path: '/detail/:skuid', component: Detail, name: 'Detail', meta: { show: true } },
         { path: '/addsucc', component: Addsucc, name: 'Addsucc', meta: { show: true } },
+        { path: '/shopCart', component: ShopCart, name: 'ShopCart', meta: { show: true } },
     ]
 })
 export default Router;

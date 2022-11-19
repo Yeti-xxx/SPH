@@ -33,3 +33,8 @@ export const reqGetGoodInfo = (skuid) => {
 export const reqAddOrUpdateShopCart = (skuId, skuNum) => {
     return request({ url: `/api/cart/addToCart/${skuId}/${skuNum}`, method: 'POST' })
 }
+
+// 获取购物车列表
+export const reqGetShopCartList = () => {
+    return request({ url: '/api/cart/cartList', method: 'GET' })
+}
