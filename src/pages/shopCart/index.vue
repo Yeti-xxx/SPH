@@ -13,7 +13,8 @@
       <div class="cart-body">
         <ul class="cart-list" v-for="(cartItem, i) in cartInfoList" :key="i">
           <li class="cart-list-con1">
-            <input type="checkbox" name="chk_list" :checked="cartItem.isChecked === 1">
+            <input type="checkbox" name="chk_list" :checked="cartItem.isChecked === 1"
+              @change="updateChecked(cartItem, $event)">
           </li>
           <li class="cart-list-con2">
             <img :src="cartItem.imgUrl">
@@ -23,15 +24,16 @@
             <span class="price">{{ cartItem.skuPrice }}</span>
           </li>
           <li class="cart-list-con5">
-            <a href="javascript:void(0)" class="mins">-</a>
-            <input autocomplete="off" type="text" :value="cartItem.skuNum" minnum="1" class="itxt">
-            <a href="javascript:void(0)" class="plus">+</a>
+            <a href="javascript:void(0)" class="mins" @click="handleNum('minus', -1, cartItem)">-</a>
+            <input autocomplete="off" type="text" :value="cartItem.skuNum" minnum="1" class="itxt"
+              @change="handleNum('change', $event.target.value * 1, cartItem)">
+            <a href="javascript:void(0)" class="plus" @click="handleNum('add', 1, cartItem)">+</a>
           </li>
           <li class="cart-list-con6">
             <span class="sum">{{ cartItem.skuNum * cartItem.skuPrice }}</span>
           </li>
           <li class="cart-list-con7">
-            <a href="#none" class="sindelet">删除</a>
+            <a href="javascript:void(0)" class="sindelet" @click="deleteCart(cartItem)">删除</a>
             <br>
             <a href="#none">移到收藏</a>
           </li>
@@ -65,7 +67,9 @@
 </template>
 
 <script>
+import { handleError } from 'vue';
 import { mapGetters } from 'vuex';
+import throttle from 'lodash/throttle'
 export default {
   name: 'ShopCart',
   computed: {
@@ -88,15 +92,63 @@ export default {
     }
   },
   created() {
-    this.getDate()
+    this.getData()
   },
   mounted() {
     console.log(this.cartList);
   },
   methods: {
     // 获取购物车数据
-    getDate() {
+    getData() {
       this.$store.dispatch('getCartList')
+    },
+    // 修改产品数量
+    handleNum: throttle(async function (type, disNum, cartItem) {
+      //type区分加减还是改变
+      switch (type) {
+        case 'add':
+          // 直接给服务器传变化量
+          disNum = 1
+          break;
+        case 'minus':
+          // 商品数量大于1才能减少1
+          disNum = cartItem.skuNum > 1 ? -1 : 0
+          break;
+        case 'change':
+          if (isNaN(disNum) || disNum < 1) {
+            disNum = 0  //输入的量非法，改变量为0
+          } else {
+            disNum = parseInt(disNum) - cartItem.skuNum
+          }
+          break;
+      }
+      // 派发action
+      try {
+        await this.$store.dispatch('AddShopCart', { skuId: cartItem.skuId, skuNum: disNum })
+        this.getData()
+      } catch (error) {
+
+      }
+    }, 700),
+    // 删除商品的方法
+    async deleteCart(cartItem) {
+      try {
+        await this.$store.dispatch('deleteCartListById', cartItem.skuId)
+        this.getData()
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    // 修改商品选中状态
+    async updateChecked(cartItem, e) {
+      console.log(e);
+      const checked = e.target.checked ? '1' : '0'
+      try {
+        await this.$store.dispatch('UpdateCheckedById', { id: cartItem.skuId, isChecked: checked })
+        this.getData()
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 }
@@ -206,7 +258,7 @@ export default {
           input {
             border: 1px solid #ddd;
             width: 40px;
-            height: 33px;
+            height: 31px;
             float: left;
             text-align: center;
             font-size: 14px;

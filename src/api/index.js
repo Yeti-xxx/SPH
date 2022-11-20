@@ -38,3 +38,13 @@ export const reqAddOrUpdateShopCart = (skuId, skuNum) => {
 export const reqGetShopCartList = () => {
     return request({ url: '/api/cart/cartList', method: 'GET' })
 }
+
+// 删除购物车产品
+export const reqDeleteCartById = (id) => {
+    return request({ url: '/api/cart/deleteCart/' + id, method: 'DELETE' })
+}
+
+// 修改商品选中状态
+export const reqUpdateCheckedById = (id, isChecked) => {
+    return request({ url: '/api/cart/checkCart/' + id + '/' + isChecked, method: 'GET' })
+}
