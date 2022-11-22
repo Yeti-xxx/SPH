@@ -28,13 +28,35 @@ const actions = {
 
     // 修改购物车某个物品选中状态
     async UpdateCheckedById({ commit }, { id, isChecked }) {
-        console.log(isChecked);
         const res = await reqUpdateCheckedById(id, isChecked)
         if (res.code == 200) {
             return 'ok'
         } else {
             return Promise.reject(new Error('修改商品状态失败'))
         }
+    },
+
+    // 删除勾选商品
+    deleteAllCheckedCart({ dispatch, getters }) {
+        const arrChecked = getters.cartList.cartInfoList    //获取勾选的商品
+        const arrPromise = []
+        arrChecked.forEach(element => {
+            const resPromise = element.isChecked == 1 ? dispatch('deleteCartListById', element.skuId) : ''
+            // 将每次返回的promise结果push进数组
+            arrPromise.push(resPromise)
+        });
+        // all全成功才成功
+        return Promise.all(arrPromise)
+    },
+
+    // 全选控制
+    updateAllCartIsChecked({ dispatch, getters }, checked) {
+        const arrPromise = []
+        getters.cartList.cartInfoList.forEach(element => {
+            const res = dispatch('UpdateCheckedById', { id: element.skuId, isChecked: checked })
+            arrPromise.push(res)
+        })
+        return Promise.all(arrPromise)
     }
 }
 const getters = {

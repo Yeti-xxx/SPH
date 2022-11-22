@@ -20,8 +20,8 @@ const Router = createRouter({
         { path: '/home', component: Home, name: 'Home', meta: { show: true } },
         // 可以在占位参数加'?',表示该参数可传可不传
         { path: '/search/:keyword?', component: Search, name: 'Search', meta: { show: true } },
-        { path: '/login', component: Login, name: 'Login', meta: { show: false } },
-        { path: '/register', component: Register, name: 'Register', meta: { show: false } },
+        { path: '/login', component: Login, name: 'Login', meta: { show: true } },
+        { path: '/register', component: Register, name: 'Register', meta: { show: true } },
         { path: '/detail/:skuid', component: Detail, name: 'Detail', meta: { show: true } },
         { path: '/addsucc', component: Addsucc, name: 'Addsucc', meta: { show: true } },
         { path: '/shopCart', component: ShopCart, name: 'ShopCart', meta: { show: true } },
