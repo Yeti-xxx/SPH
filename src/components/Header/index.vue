@@ -6,22 +6,15 @@
                 <div class="container">
                     <div class="loginList">
                         <p>尚品汇欢迎您！</p>
-                        <!-- 没有登录：显示登录与注册 -->
-                        <!-- <p v-if="!$store.state.user.nickName"> -->
-                        <span>请</span>
-                        <!-- <a href="###">登录</a> -->
-                        <!-- 
-                声明式导航,当然你也可以使用编程式导航,因为不管是那个导航，都可以实现路由跳转，
-                但是最后为什么选择声明式导航，没有任何业务、逻辑
-               -->
-                        <router-link to="/login">登录</router-link>
-                        <router-link class="register" to="/register">注册</router-link>
-                        <!-- </p> -->
-                        <!-- 如果登录显示的是用户名字与退出登录 -->
-                        <!-- <p v-else>
-                            <a>{{ $store.state.user.nickName }}</a>
-                            <a class="register" @click="logout">退出登录</a>
-                        </p> -->
+                        <p v-if="!userName">
+                            <span>请</span>
+                            <router-link to="/login">登录</router-link>
+                            <router-link class="register" to="/register">注册</router-link>
+                        </p>
+                        <p v-else>
+                            <a>{{userName}}</a>
+                            <a class="register" @click="logOut">退出登录</a>
+                        </p>
                     </div>
                     <div class="typeList">
                         <router-link to="/center">我的订单</router-link>
@@ -64,6 +57,11 @@ export default {
             keyword: ''
         }
     },
+    computed:{
+        userName(){
+            return this.$store.state.user.userInfo.name
+        }
+    },
     methods: {
         goSearch() {
             // 字符串传参
@@ -77,6 +75,15 @@ export default {
                 this.$router.push(location)
             }
 
+        },
+        // 退出登录
+        async logOut(){
+            try {
+                await this.$store.dispatch('reqLogOut')
+                this.$router.push('/home')
+            } catch (error) {
+                console.log(error);
+            }
         }
     },
 }

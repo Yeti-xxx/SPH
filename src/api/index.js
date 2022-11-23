@@ -58,3 +58,18 @@ export const reqGetCode = (phone) => {
 export const reqUserRegister = (data) => {
     return request({ url: '/api/user/passport/register', data, method: 'POST' })
 }
+
+// 登录
+export const reqUserLogin = (data) => {
+    return request({ url: '/api/user/passport/login', data, method: 'POST' })
+}
+
+// token获取用户信息
+export const reqUserInfo = () => {
+    return request({ url: '/api/user/passport/auth/getUserInfo', method: 'GET' })
+}
+
+// 退出登录
+export const reqLogOut = () => {
+    return request({ url: '/api/user/passport/logout', method: 'GET' })
+}

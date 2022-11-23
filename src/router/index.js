@@ -1,5 +1,6 @@
 //配置路由
 import { createRouter, createWebHashHistory } from "vue-router";
+import store from "../store/index";
 // 引入组件
 import Home from '../pages/Home/index.vue'
 import Search from '../pages/Search/index.vue'
@@ -26,5 +27,21 @@ const Router = createRouter({
         { path: '/addsucc', component: Addsucc, name: 'Addsucc', meta: { show: true } },
         { path: '/shopCart', component: ShopCart, name: 'ShopCart', meta: { show: true } },
     ]
+})
+// 路由守卫
+Router.beforeEach((to, from, next) => {
+    const token = store.state.user.token
+    if (token) {
+        if (to.path == '/login'||to.path=='/register') {
+            next('/')
+        }else{
+            next()
+        }
+    } else {
+        // 未登录
+        next()
+    }
+    
+
 })
 export default Router;

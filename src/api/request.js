@@ -18,6 +18,10 @@ request.interceptors.request.use(config => {
     if (store.state.detail.uuid_token) {
         config.headers.userTempId = store.state.detail.uuid_token
     }
+    // 如果有token则携带
+    if (store.state.user.token) {
+        config.headers.token = store.state.user.token
+    }
     nprogress.start()
     // config控制请求头
     return config

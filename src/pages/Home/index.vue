@@ -36,6 +36,8 @@ export default {
   },
   mounted() {
     this.$store.dispatch('getFloorList')
+    // token获取用户信息
+    this.$store.dispatch('getUserInfo')
   }
 }
 

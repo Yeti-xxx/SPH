@@ -136,7 +136,6 @@ export default {
     // 监听路由地址的变化，改变就发送新的搜索请求
     $route: {
       handler(newV, oldV) {
-        console.log(111);
         // 先整理参数
         Object.assign(this.searchParams, this.$route.query, this.$route.params)
         // 整理后再发送请求
