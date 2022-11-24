@@ -70,8 +70,8 @@ export default {
   name: 'Login',
   data() {
     return {
-      phone: '',
-      password: ''
+      phone: '13700000000',
+      password: '111111'
     }
   },
   methods: {

@@ -9,6 +9,8 @@ import Register from '../pages/Register/index.vue'
 import Detail from '../pages/Detail/index.vue'
 import Addsucc from '../pages/AddSuccess/index.vue'
 import ShopCart from '../pages/shopCart/index.vue'
+import Trade from '../pages/Trade/index.vue'
+
 const Router = createRouter({
     history: createWebHashHistory(),
     // 添加滚动行为
@@ -26,22 +28,38 @@ const Router = createRouter({
         { path: '/detail/:skuid', component: Detail, name: 'Detail', meta: { show: true } },
         { path: '/addsucc', component: Addsucc, name: 'Addsucc', meta: { show: true } },
         { path: '/shopCart', component: ShopCart, name: 'ShopCart', meta: { show: true } },
+        { path: '/trade', component: Trade, name: 'Trade', meta: { show: true } },
     ]
 })
 // 路由守卫
-Router.beforeEach((to, from, next) => {
+Router.beforeEach(async (to, from, next) => {
     const token = store.state.user.token
+    const name = store.state.user.userInfo.name
     if (token) {
-        if (to.path == '/login'||to.path=='/register') {
-            next('/')
-        }else{
-            next()
+        if (to.path == '/login' || to.path == '/register') {
+            next('/home')
+        } else {
+            // 登录了，访问的是其他页面
+            if (name) {
+                next()
+            } else {
+                // 登录了没有用户信息
+                // 即路由跳转前获取用户信息
+                try {
+                    await store.dispatch('getUserInfo')
+                    next()
+                } catch (error) {
+                    // token失效，重新登录
+                    await store.dispatch('reqLogOut')
+                    next('/login')
+                }
+            }
         }
     } else {
         // 未登录
         next()
     }
-    
+
 
 })
 export default Router;
