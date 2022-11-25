@@ -8,7 +8,6 @@ const mutations = {
         state.address = address
     },
     GETORDERINFO(state,orderInfo){
-        console.log(44);
         state.orderInfo = orderInfo
     }
 }

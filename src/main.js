@@ -13,10 +13,14 @@ import 'swiper/css/swiper.css'
 // 测试
 // import { reqCategoryList } from './api/index.js'
 // reqCategoryList()
+// 统一引入api
+import * as api from './api/index'
+// console.log(api);
 const app = createApp(App)
 app.component(TypeNav.name, TypeNav)
 app.component(Carousel.name, Carousel)
 app.component(Pagination.name, Pagination)
+app.config.globalProperties.$api = api  //挂载api
 app.use(router)
 app.use(store)
 app.mount('#app')

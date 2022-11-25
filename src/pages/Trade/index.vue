@@ -36,13 +36,13 @@
           </li>
           <li>
             <p>
-              {{order.skuName}}</p>
+              {{ order.skuName }}</p>
             <h4>7天无理由退货</h4>
           </li>
           <li>
-            <h3>￥{{order.orderPrice}}</h3>
+            <h3>￥{{ order.orderPrice }}</h3>
           </li>
-          <li>X{{order.skuNum}}</li>
+          <li>X{{ order.skuNum }}</li>
           <li>有货</li>
         </ul>
       </div>
@@ -61,8 +61,8 @@
     <div class="money clearFix">
       <ul>
         <li>
-          <b><i>{{orderInfo.totalNum}}</i>件商品，总商品金额</b>
-          <span>¥{{orderInfo.totalAmount}}.00</span>
+          <b><i>{{ orderInfo.totalNum }}</i>件商品，总商品金额</b>
+          <span>¥{{ orderInfo.totalAmount }}.00</span>
         </li>
         <li>
           <b>返现：</b>
@@ -75,7 +75,7 @@
       </ul>
     </div>
     <div class="trade">
-      <div class="price">应付金额:　<span>¥{{orderInfo.totalAmount}}.00</span></div>
+      <div class="price">应付金额:　<span>¥{{ orderInfo.totalAmount }}.00</span></div>
       <div class="receiveInfo">
         寄送至:
         <span>{{ userDefaultAddress.fullAddress }}</span>
@@ -84,19 +84,19 @@
       </div>
     </div>
     <div class="sub clearFix">
-      <router-link class="subBtn" to="/pay">提交订单</router-link>
+      <router-link class="subBtn" to="/pay" @click="submitOrder">提交订单</router-link>
     </div>
   </div>
 </template>
 
 <script>
 import { mapMutations, mapState } from 'vuex';
-
 export default {
   name: 'Trade',
   data() {
     return {
-      msg:''
+      msg: '',
+      orderId: ''
     }
   },
   computed: {
@@ -120,6 +120,28 @@ export default {
         element.isDefault = 0
       });
       address.isDefault = 1
+    },
+    // 提交订单
+    async submitOrder() {
+      // 拿到订单号
+      const { tradeNo } = this.orderInfo
+      const data = {
+        consignee: this.userDefaultAddress.consignee,
+        consigneeTel: this.userDefaultAddress.phoneNum,
+        deliveryAddress: this.userDefaultAddress.fullAddress,
+        paymentWay: "ONLINE",
+        orderComment: this.msg,
+        orderDetailList: this.orderInfo.detailArrayList
+      }
+      const res = await this.$api.reqSubmitOrder(tradeNo, data)
+      console.log(res);
+      if (res.code === 200) {
+        // 存储订单号
+        this.orderId = res.data
+        this.$router.push('/pay?orderId=' + this.orderId)
+      } else {
+        console.log(res.data);
+      }
     }
   }
 }

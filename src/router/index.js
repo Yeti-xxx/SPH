@@ -10,6 +10,8 @@ import Detail from '../pages/Detail/index.vue'
 import Addsucc from '../pages/AddSuccess/index.vue'
 import ShopCart from '../pages/shopCart/index.vue'
 import Trade from '../pages/Trade/index.vue'
+import Pay from '../pages/Pay/index.vue'
+import PaySuccess from '../pages/PaySuccess/index.vue'
 
 const Router = createRouter({
     history: createWebHashHistory(),
@@ -29,6 +31,8 @@ const Router = createRouter({
         { path: '/addsucc', component: Addsucc, name: 'Addsucc', meta: { show: true } },
         { path: '/shopCart', component: ShopCart, name: 'ShopCart', meta: { show: true } },
         { path: '/trade', component: Trade, name: 'Trade', meta: { show: true } },
+        { path: '/pay', component: Pay, name: 'Pay', meta: { show: true } },
+        { path: '/paySuccess', component: PaySuccess, name: 'PaySuccess', meta: { show: true } },
     ]
 })
 // 路由守卫
