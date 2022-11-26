@@ -5,6 +5,18 @@ import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 // https://vitejs.dev/config/
 export default defineConfig({
+  build: {
+    rollupOptions: {
+      // https://rollupjs.org/guide/en/#outputmanualchunks
+      output: {
+        manualChunks: {
+          'group-user': [
+            './src/Search'
+          ],
+        },
+      },
+    }
+  },
   plugins: [
     vue(),
     AutoImport({
@@ -13,7 +25,6 @@ export default defineConfig({
     Components({
       resolvers: [ElementPlusResolver()],
     }),
-
   ]
 })
 // vite.config.ts

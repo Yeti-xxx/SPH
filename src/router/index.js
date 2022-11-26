@@ -3,7 +3,8 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import store from "../store/index";
 // 引入组件
 import Home from '../pages/Home/index.vue'
-import Search from '../pages/Search/index.vue'
+const Search = () => import('../pages/Search/index.vue')
+// import Search from '../pages/Search/index.vue'
 import Login from '../pages/Login/index.vue'
 import Register from '../pages/Register/index.vue'
 import Detail from '../pages/Detail/index.vue'
@@ -12,7 +13,10 @@ import ShopCart from '../pages/shopCart/index.vue'
 import Trade from '../pages/Trade/index.vue'
 import Pay from '../pages/Pay/index.vue'
 import PaySuccess from '../pages/PaySuccess/index.vue'
-
+import Center from '../pages/Center/index.vue'
+// 二级路由
+import myOrder from '../pages/Center/myOrder/index.vue'
+import groupOrder from '../pages/Center/groupOrder/index.vue'
 const Router = createRouter({
     history: createWebHashHistory(),
     // 添加滚动行为
@@ -30,9 +34,37 @@ const Router = createRouter({
         { path: '/detail/:skuid', component: Detail, name: 'Detail', meta: { show: true } },
         { path: '/addsucc', component: Addsucc, name: 'Addsucc', meta: { show: true } },
         { path: '/shopCart', component: ShopCart, name: 'ShopCart', meta: { show: true } },
-        { path: '/trade', component: Trade, name: 'Trade', meta: { show: true } },
-        { path: '/pay', component: Pay, name: 'Pay', meta: { show: true } },
+        {
+            path: '/trade', component: Trade, name: 'Trade', meta: { show: true },
+            beforeEnter: (to, from, next) => {
+                if (from.path == '/shopcart') {
+                    next()
+                } else {
+                    next(false)
+                }
+            }
+        },
+        {
+            path: '/pay', component: Pay, name: 'Pay', meta: { show: true },
+            beforeEnter: (to, from, next) => {
+                if (from.path == '/trade') {
+                    next()
+                } else {
+                    next(false)
+                }
+            }
+        },
         { path: '/paySuccess', component: PaySuccess, name: 'PaySuccess', meta: { show: true } },
+        {
+            path: '/center', component: Center, name: 'Center', meta: { show: true },
+            children: [
+                { path: 'myOrder', component: myOrder, name: 'myOrder' },
+                { path: 'groupOrder', component: groupOrder, name: 'groupOrder' },
+                { path: '/center', redirect: '/center/myOrder' }
+            ]
+        },
+
+
     ]
 })
 // 路由守卫
@@ -61,7 +93,14 @@ Router.beforeEach(async (to, from, next) => {
         }
     } else {
         // 未登录
-        next()
+        const path = to.path
+        if (path.indexOf('/trade') !== -1 || path.indexOf('pay') !== -1 || path.indexOf('center') !== -1 || path.indexOf('/shopcart') !== -1) {
+            // 把未登录时想去的路由保存到地址栏
+            next('/login?redirect=' + to.path)
+        } else {
+            next()
+        }
+
     }
 
 

@@ -3,6 +3,7 @@ import './style.css'
 import App from './App.vue'
 import router from './router/index'
 import store from './store/index'
+import VueLazyload from 'vue-lazyload'
 // 三级分类导航栏
 import TypeNav from './components/TypeNav/index.vue'
 import Carousel from './components/Carousel/index.vue'
@@ -21,6 +22,7 @@ app.component(TypeNav.name, TypeNav)
 app.component(Carousel.name, Carousel)
 app.component(Pagination.name, Pagination)
 app.config.globalProperties.$api = api  //挂载api
+app.use(VueLazyload)
 app.use(router)
 app.use(store)
 app.mount('#app')

@@ -81,7 +81,9 @@ export default {
       try {
         phone && password && await this.$store.dispatch('userLogin', { phone, password })
         // 登录成功，路由跳转
-        this.$router.push('/home')
+        // 先看路由中是否有query参数
+        const path = this.$route.query.redirect || '/home'
+        this.$router.push(path)
       } catch (error) {
         alert(error)
       }
